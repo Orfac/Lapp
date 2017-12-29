@@ -1,0 +1,119 @@
+	[section _code, code]
+start:
+	lda array
+	push 1
+	pop [a_Index]
+
+CheckingForFill:
+	push [a_Index]
+	push [max_index]
+	jb EndOfChecking
+
+	push 1
+	pop [line_count]
+	push 0
+	pop [line_index]
+
+	push [line_count]
+	push [line_index]
+	add
+	pop [bt_index]
+
+
+	StartOfFilling:
+	push isFill
+	push [bt_index]
+	add
+	pop [index]
+
+	push [[index]]
+	push 0
+	je EndOfFilling
+
+	push [line_index]
+	push 2
+	mul
+	pop [line_index]
+
+	push array
+	push [a_Index]
+	add
+	pop [index]
+
+	push [[index]]
+	push bintree
+	push [bt_index]
+	add
+	pop [index]
+	push [[index]]
+	jle Left
+	push [line_index]
+	inc
+	pop [line_index]
+	Left:
+	push[line_count]
+	push 2
+	mul
+	pop[line_count]
+
+	push [line_count]
+	push [line_index]
+	add
+	pop [bt_index]
+
+	jmp StartOfFilling:
+	EndOfFilling:
+	push [a_Index]
+	push array
+	add
+	pop [index]
+	push [[index]]
+
+	push [bt_index]
+	push array
+	add
+	pop [index]
+	pop [[index]]
+
+	push [bt_index]
+	push isFill
+	add
+	pop [index]
+	push 1
+	pop [[index]]
+	
+
+	
+	push [a_Index]
+	inc
+	pop [a_Index]
+	jmp CheckingForFill
+EndOfChecking:
+
+end:
+	prt array, 31
+
+[section __data, data]
+array:
+	resb 10;
+bintree:
+	resb 255;
+isFill:
+	times 255 db 0;
+line_index:
+	resb 1;
+a_Index:
+	resb 1;
+bt_index:
+	resb 1;
+line_count:
+	resb 1;
+index:
+	resb 4;
+elem:
+	resb 1;
+[section __constants, consts]
+max_index:
+	db 9;
+max_depth:
+	db 4;

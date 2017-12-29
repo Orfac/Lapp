@@ -1,0 +1,41 @@
+	[section _code, code]
+start:
+	push [n]
+	pop [value]
+	push 0x1
+	push 0x1
+	pop [previous_elem]
+	pop [n_elem]
+	push [[value]]
+	push 0x2
+	jl end
+next:
+	push [previous_elem]
+	push [n_elem]
+	pop [previous_elem]
+	push [n_elem]
+	add
+	pop [n_elem]
+	push [value]
+	dec
+	pop [value]
+	push [value]
+	push 0x2
+	jbe next
+
+end:
+	push [n_elem]
+	pop [value]
+	prt value, 0x4
+
+[section __data, data]
+value:
+	resb 4;
+n_elem:
+	resb 4;
+previous_elem:
+	resb 4;
+
+[section __constants, consts]
+n:
+	db 0x10

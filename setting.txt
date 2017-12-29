@@ -1,0 +1,7 @@
+﻿P3117U16
+4a470b8c-d4ae-4f83-bdf1-761d0f08f136
+Молодецкий Арсений Алексеевич
+
+Portable.RemoteTasks.Manager.exe -w -s Assemble asmListing list.arh definitionFile conf.arh archName StackArch
+
+Portable.RemoteTasks.Manager.exe -g 04442a23-5378-4ef5-9a9f-91863c18902c -r out.ptptb -o out.ptptb

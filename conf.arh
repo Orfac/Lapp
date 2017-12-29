@@ -1,0 +1,102 @@
+architecture StackArch { 
+
+    memory:        /* aspects of memory adresses   */         
+    	range _code[0x0000..0xffff]{
+    		cell = 8;
+    		endianess = little-endian;
+    		granularity = 0;
+    	}
+
+    	range _consts[0x0000..0xffff]{
+    		cell = 8;
+    		endianess = little-endian;
+    		granularity = 0;
+    	}
+
+    	range _data[0x0000..0xffff]{
+    		cell = 8;
+    		endianess = little-endian;
+    		granularity = 0;
+    	}
+
+    instructions:  /* aspects of instructions      */         
+
+        encode index32 field = immediate[32] offset;
+        encode value32 field = immediate[32] data;
+        encode i field = immediate[32] offset;
+        encode _lbl field = immediate[32] offset;
+                                                                                
+        instruction nop = {0000 0000};                                          // No operation 
+
+        /* Push instructions from 0000 0001 to 0000 0011  */
+        instruction push_value = {0000 0001, value32 as value};                 // Push value to stack
+        instruction push_by_cell = {0000 0011, index32 as index};              // Push value by index in memory cell
+        instruction push_by_adress_cell = {1000 0111, index32 as index};
+
+        /* Pop instructions from 0000 0100 to 0000 0110 */   
+        instruction pop_ = {0000 0100};                                          // Pop value from stack
+        instruction pop_by_cell = {0000 0110, index32 as index};               // Pop value from stack to memory cell
+        instruction pop_by_adress_cell = {1000 0110, index32 as index};
+
+        
+        /* Math instructions from 0000 1000 to 0000 1101 */
+
+        // All operations works with 2 top numbers on the stack
+        instruction add = {0000 1000};                                          // Summarizes 1 + 2
+        instruction sub = {0000 1001};                                          // Substracts 1 - 2
+        instruction mul = {0000 1010};                                          // Multiplies 1 * 2
+        instruction div = {0000 1011};                                          // Integerly divides 1 / 2
+
+        // All operations works with top number on the stack
+        instruction inc = {0000 1100};                                          // Increment 1++
+        instruction dec = {0000 1101};                                          // Decrement 1--
+
+        /* Jump instructions from 0001 0000 to 0001 0110 Comparing first and second values from stack and jump to label if true)*/
+        instruction jump = {0001 0000, _lbl as lbl};                             
+        instruction jump_if_equal = {0001 0001, _lbl as lbl};                   
+        instruction jump_if_less_or_equal = {0001 0010, _lbl as lbl};
+        instruction jump_if_bigger_or_equal = {0001 0011, _lbl as lbl};
+        instruction jump_if_bigger = {0001 0100, _lbl as lbl};
+        instruction jump_if_less = {0001 0101, _lbl as lbl};
+        instruction jump_if_not_equal = {0001 0110, _lbl as lbl};
+
+        /* utility instructions */
+        instruction print = {0010 0000, index32 as index, value32 as value};    // write from index value bytes
+        instruction swap = {0001 1111};                                         // swap 2 upper elements from stack
+        instruction lda = {0010 0000, index32 as index};
+    mnemonics:     /* aspects of mnemonics         */  
+        format plain1 is "{1}";
+    
+        format plain_value is "{1}";
+        format plain_index is "[{1}]";
+        format plain_address_value is "[[{1}]]";
+        format plain2 is "{1}, {2}";
+
+        mnemonic push for push_value(value) plain_value;
+        mnemonic push for push_by_cell(index) plain_index;
+        mnemonic push for push_by_adress_cell(index) plain_address_value;
+
+        mnemonic pop for pop_();
+        mnemonic pop for pop_by_cell(index) plain_index;
+        mnemonic pop for pop_by_adress_cell(index) plain_address_value;
+
+        mnemonic add();
+        mnemonic sub();
+        mnemonic mul();
+        mnemonic div();
+        mnemonic inc();
+        mnemonic dec();
+       
+        mnemonic jmp for jump(lbl) plain1;
+        mnemonic je for jump_if_equal(lbl) plain1;
+        mnemonic jne for jump_if_not_equal(lbl) plain1;
+        mnemonic jb for jump_if_bigger(lbl) plain1;
+        mnemonic jbe for jump_if_bigger_or_equal(lbl) plain1;
+        mnemonic jl for jump_if_less(lbl) plain1;
+        mnemonic jle for jump_if_less_or_equal(lbl) plain1;
+
+        mnemonic prt for print(index,value) plain2;
+        mnemonic lda(index) plain1;
+        mnemonic swp for swap();
+        mnemonic nop();
+}
